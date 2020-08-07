@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Test Application</string>
+    <string name="title_services">Сервисы</string>
+    <string name="title_form">Заявка</string>
+    <string name="rv_service_default_title">Service title</string>
+    <string name="form_tw_name_hint">Ваше имя</string>
+    <string name="form_tw_description_hint">Примечания</string>
+</resources>
