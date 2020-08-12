@@ -1,5 +1,6 @@
 package com.example.testapplication.network
 
+import com.example.testapplication.models.EmptyBody
 import com.example.testapplication.models.ServiceItem
 import retrofit2.Response
 import retrofit2.http.GET
@@ -10,5 +11,5 @@ interface ApiService {
     suspend fun getServiceList(): Response<List<ServiceItem>>
 
     @POST("/upload.php")
-    suspend fun sendForm()
+    suspend fun sendForm() : Response<EmptyBody>
 }

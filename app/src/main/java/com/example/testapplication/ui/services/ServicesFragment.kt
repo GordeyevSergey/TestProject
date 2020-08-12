@@ -14,7 +14,7 @@ import com.example.testapplication.adapter.ServiceListAdapter
 import com.example.testapplication.databinding.FragmentServicesBinding
 import com.example.testapplication.models.ServiceItem
 
-class ServicesFragment : Fragment() {
+class ServicesFragment : Fragment(){
 
     private lateinit var binding: FragmentServicesBinding
     private lateinit var servicesViewModel: ServicesViewModel
