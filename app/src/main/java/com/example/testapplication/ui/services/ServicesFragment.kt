@@ -1,5 +1,8 @@
 package com.example.testapplication.ui.services
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,19 +16,23 @@ import com.example.testapplication.R
 import com.example.testapplication.adapter.ServiceListAdapter
 import com.example.testapplication.databinding.FragmentServicesBinding
 import com.example.testapplication.models.ServiceItem
+import com.example.testapplication.util.OnServiceItemClick
+import com.example.testapplication.util.OnToast
 
-class ServicesFragment : Fragment(){
+class ServicesFragment : Fragment(), OnServiceItemClick {
 
     private lateinit var binding: FragmentServicesBinding
     private lateinit var servicesViewModel: ServicesViewModel
 
-    private val serviceListAdapter = ServiceListAdapter()
+    private lateinit var serviceListAdapter: ServiceListAdapter
+    private lateinit var toast: OnToast
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
         servicesViewModel = ViewModelProviders.of(this).get(ServicesViewModel::class.java)
 
         //Recycler
+        serviceListAdapter = ServiceListAdapter(this)
         binding.servicesList.adapter = serviceListAdapter
         binding.servicesList.layoutManager = LinearLayoutManager(context)
 
@@ -34,7 +41,16 @@ class ServicesFragment : Fragment(){
             serviceListAdapter.setServices(newServiceList)
         })
 
-        servicesViewModel.getServiceList()
         return binding.root
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        toast = context as OnToast
+    }
+
+    override fun onClick(item: ServiceItem) {
+        toast.showMessage("${item.title} открывается")
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link)))
     }
 }
