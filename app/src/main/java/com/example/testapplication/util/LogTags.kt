@@ -10,5 +10,7 @@ enum class LogTags(val logMessage: String) {
     LOG_PERMISSIONS_DENIED("permissions denied"),
 
     LOG_CAMERA_RESULT_SUCCESSFUL("Image received"),
-    LOG_FORM_IMAGEBUTTON_SRC_CHANGED("image changed")
+    LOG_FORM_IMAGEBUTTON_SRC_CHANGED("image changed"),
+
+    LOG_RECYCLERVIEW_ITEM_CLICK("click")
 }
