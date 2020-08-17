@@ -25,6 +25,7 @@ import com.example.testapplication.util.LogTags
 
 import com.example.testapplication.util.OnToast
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
 class FormFragment : Fragment() {
     //ui
@@ -48,9 +49,10 @@ class FormFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
-        formViewModel = ViewModelProviders.of(this).get(FormViewModel::class.java)
 
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
+        setToolbar()
+        formViewModel = ViewModelProviders.of(this).get(FormViewModel::class.java)
         binding.imagebuttonFormPhoto.setOnClickListener {
             checkPermissionsAndStartCamera()
         }
@@ -60,6 +62,15 @@ class FormFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    private fun setToolbar() {
+        val toolbar = binding.root.custom_actionbar
+        toolbar.title.setText(R.string.title_form)
+        toolbar.send_form_imagebutton.visibility = View.VISIBLE
+        toolbar.send_form_imagebutton.setOnClickListener {
+            onToast.showMessage("Hello")
+        }
     }
 
     private fun changeFormImageButtonSrc(uri: Uri) {
