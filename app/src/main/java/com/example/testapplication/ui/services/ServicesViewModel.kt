@@ -3,16 +3,14 @@ package com.example.testapplication.ui.services
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.ServiceItem
-import com.example.testapplication.network.RetrofitInstance
+import com.example.testapplication.ui.BaseViewModel
 import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ServicesViewModel : ViewModel() {
-    private val retrofit = RetrofitInstance.getRetrofitInstance()
+class ServicesViewModel : BaseViewModel() {
     private var isResponseBlocked: Boolean = false
 
     private val _serviceListLiveData = MutableLiveData<List<ServiceItem>>()

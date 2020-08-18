@@ -44,22 +44,24 @@ class FormFragment : Fragment() {
         onToast = context as OnToast
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
         setToolbar()
         formViewModel = ViewModelProviders.of(this).get(FormViewModel::class.java)
+
+        //Observers
+        formViewModel.formLiveData.observe(this, Observer {
+            onToast.showMessage(it.title)
+            binding.textviewFormName.setText(it.title)
+            binding.textviewFormDescription.setText(it.description)
+            it.photo?.let {
+                changeFormImageButtonSrc(it)
+            }
+        })
+        //Listeners
         binding.imagebuttonFormPhoto.setOnClickListener {
             checkPermissionsAndStartCamera()
         }
-
-        formViewModel.imageLiveData.observe(this, Observer {
-            changeFormImageButtonSrc(it)
-        })
 
         return binding.root
     }
@@ -68,14 +70,18 @@ class FormFragment : Fragment() {
         val toolbar = binding.root.custom_actionbar
         toolbar.title.setText(R.string.title_form)
         toolbar.send_form_imagebutton.visibility = View.VISIBLE
+
         toolbar.send_form_imagebutton.setOnClickListener {
-            onToast.showMessage("Hello")
+            //send form to API
+            saveForm()
+//            formViewModel.sendForm()
         }
     }
 
     private fun changeFormImageButtonSrc(uri: Uri) {
         Picasso.get()
                 .load(uri)
+                .resizeDimen(R.dimen.form_photo_size, R.dimen.form_photo_size)
                 .into(binding.imagebuttonFormPhoto)
 
         Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, uri.toString())
@@ -84,7 +90,7 @@ class FormFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             camera_pic_result?.let {
-                formViewModel.setImageToLd(it)
+                formViewModel.saveImageForm(it)
                 Log.i(LogTags.LOG_CAMERA_RESULT_SUCCESSFUL.name, it.toString())
             }
         }
@@ -130,5 +136,14 @@ class FormFragment : Fragment() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, camera_pic_result)
         startActivityForResult(cameraIntent, CAMERA_CODE)
+    }
+
+    private fun saveForm() {
+        formViewModel.saveTextForm(title = binding.textviewFormName.text.toString(), desctiption = binding.textviewFormDescription.text.toString())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        saveForm()
     }
 }
