@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FormViewModel : BaseViewModel() {
-    private var currentForm = Form(title = "Title", description = "Description")
+    private var currentForm = Form()
 
     private val _formLiveData = MutableLiveData<Form>()
     val formLiveData: LiveData<Form>
@@ -33,8 +33,15 @@ class FormViewModel : BaseViewModel() {
         _formLiveData.value = currentForm
     }
 
+    private fun clearForm() {
+        currentForm.title = ""
+        currentForm.description = ""
+        currentForm.photo = null
+        _formLiveData.value = currentForm
+    }
+
     fun sendForm() {
-        formValidation()
+//        formValidation()
         CoroutineScope(Dispatchers.IO).launch {
             val response = retrofit.sendForm(currentForm.title, currentForm.description, null)
 
@@ -49,7 +56,7 @@ class FormViewModel : BaseViewModel() {
         }
     }
 
-    private fun formValidation() {
-
+    private fun formValidation(){
+        
     }
 }

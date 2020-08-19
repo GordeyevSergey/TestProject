@@ -47,16 +47,13 @@ class FormFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
         setToolbar()
-        formViewModel = ViewModelProviders.of(this).get(FormViewModel::class.java)
+        formViewModel = ViewModelProviders.of(requireActivity()).get(FormViewModel::class.java)
 
         //Observers
         formViewModel.formLiveData.observe(this, Observer {
-            onToast.showMessage(it.title)
             binding.textviewFormName.setText(it.title)
             binding.textviewFormDescription.setText(it.description)
-            it.photo?.let {
-                changeFormImageButtonSrc(it)
-            }
+            changeFormImageButtonSrc(it.photo)
         })
         //Listeners
         binding.imagebuttonFormPhoto.setOnClickListener {
@@ -78,12 +75,16 @@ class FormFragment : Fragment() {
         }
     }
 
-    private fun changeFormImageButtonSrc(uri: Uri) {
-        Picasso.get()
-                .load(uri)
-                .resizeDimen(R.dimen.form_photo_size, R.dimen.form_photo_size)
-                .into(binding.imagebuttonFormPhoto)
-
+    private fun changeFormImageButtonSrc(uri: Uri?) {
+        if (uri == null) {
+            binding.imagebuttonFormPhoto.setImageResource(R.drawable.ic_form_imagebutton)
+        } else {
+            Picasso.get()
+                    .load(uri)
+                    .resizeDimen(R.dimen.form_photo_size, R.dimen.form_photo_size)
+                    .error(R.drawable.ic_form_imagebutton)
+                    .into(binding.imagebuttonFormPhoto)
+        }
         Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, uri.toString())
     }
 
