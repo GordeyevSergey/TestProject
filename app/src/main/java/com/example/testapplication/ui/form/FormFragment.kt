@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 
 import androidx.fragment.app.Fragment
@@ -28,16 +29,14 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
 class FormFragment : Fragment() {
-    //ui
     private lateinit var binding: FragmentFormBinding
     private lateinit var formViewModel: FormViewModel
-
     //interfaces
     private lateinit var onToast: OnToast
 
     private val PERMISSION_CODE = 1000
     private val CAMERA_CODE = 1001
-    private var camera_pic_result: Uri? = null
+    private var cameraResultPhoto: Uri? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -55,6 +54,11 @@ class FormFragment : Fragment() {
             binding.textviewFormDescription.setText(it.description)
             changeFormImageButtonSrc(it.photo)
         })
+
+        formViewModel.sendFormResult.observe(this, Observer {
+            showAlertDialog(it)
+        })
+
         //Listeners
         binding.imagebuttonFormPhoto.setOnClickListener {
             checkPermissionsAndStartCamera()
@@ -71,7 +75,7 @@ class FormFragment : Fragment() {
         toolbar.send_form_imagebutton.setOnClickListener {
             //send form to API
             saveForm()
-//            formViewModel.sendForm()
+            formViewModel.sendForm()
         }
     }
 
@@ -90,7 +94,7 @@ class FormFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            camera_pic_result?.let {
+            cameraResultPhoto?.let {
                 formViewModel.saveImageForm(it)
                 Log.i(LogTags.LOG_CAMERA_RESULT_SUCCESSFUL.name, it.toString())
             }
@@ -132,15 +136,27 @@ class FormFragment : Fragment() {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "Pic")
         values.put(MediaStore.Images.Media.DESCRIPTION, "Camera pic")
-        camera_pic_result = context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        cameraResultPhoto = context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, camera_pic_result)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraResultPhoto)
         startActivityForResult(cameraIntent, CAMERA_CODE)
     }
 
     private fun saveForm() {
         formViewModel.saveTextForm(title = binding.textviewFormName.text.toString(), desctiption = binding.textviewFormDescription.text.toString())
+    }
+
+    private fun showAlertDialog(message: String) {
+        context?.let {
+            AlertDialog.Builder(it)
+                    .setTitle(getString(R.string.alert_dialog_title))
+                    .setMessage(message)
+                    .setPositiveButton(getString(R.string.alert_dialog_positive_button)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+        }
     }
 
     override fun onStop() {
