@@ -6,5 +6,5 @@
     <string name="form_tw_name_hint">Ваше имя</string>
     <string name="form_tw_description_hint">Примечания</string>
     <string name="alert_dialog_positive_button">OK</string>
-    <string name="alert_dialog_title">Title</string>
+    <string name="alert_dialog_title">Message</string>
 </resources>

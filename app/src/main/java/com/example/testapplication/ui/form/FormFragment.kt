@@ -29,13 +29,16 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
 class FormFragment : Fragment() {
+    companion object {
+        private const val PERMISSION_CODE = 1000
+        private const val CAMERA_CODE = 1001
+    }
+
     private lateinit var binding: FragmentFormBinding
     private lateinit var formViewModel: FormViewModel
     //interfaces
     private lateinit var onToast: OnToast
 
-    private val PERMISSION_CODE = 1000
-    private val CAMERA_CODE = 1001
     private var cameraResultPhoto: Uri? = null
 
     override fun onAttach(context: Context?) {
@@ -89,7 +92,7 @@ class FormFragment : Fragment() {
                     .error(R.drawable.ic_form_imagebutton)
                     .into(binding.imagebuttonFormPhoto)
         }
-        Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, uri.toString())
+        Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, uri?.path.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -134,8 +137,8 @@ class FormFragment : Fragment() {
 
     private fun startCamera() {
         val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "Pic")
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Camera pic")
+//        values.put(MediaStore.Images.Media.TITLE, "Pic")
+//        values.put(MediaStore.Images.Media.DESCRIPTION, "Camera pic")
         cameraResultPhoto = context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)

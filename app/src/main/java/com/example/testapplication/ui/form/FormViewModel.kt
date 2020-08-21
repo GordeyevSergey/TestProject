@@ -11,6 +11,9 @@ import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import java.io.File
 
 class FormViewModel : BaseViewModel() {
     private var currentForm = Form()
@@ -42,27 +45,29 @@ class FormViewModel : BaseViewModel() {
         currentForm.title = ""
         currentForm.description = ""
         currentForm.photo = null
-        _formLiveData.value = currentForm
+        _formLiveData.postValue(currentForm)
     }
 
     fun sendForm() {
         if (formValidation()) {
             CoroutineScope(Dispatchers.IO).launch {
-                val response = retrofit.sendForm(currentForm.title, currentForm.description, null)
+                val file = File(currentForm.photo?.path.toString())
+                val partPhoto = RequestBody.create(MediaType.parse("multipart/form-data"), file)
 
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.name, LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.logMessage)
+                val response = retrofit.sendForm(currentForm.title, currentForm.description, null)
+                Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
+
                 if (response.isSuccessful) {
-                    _sendFormResult.value = FormStatus.FORM_SEND_SUCCESSFUL.message
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.message())
+                    clearForm()
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
                 } else {
-                    _sendFormResult.value = FormStatus.FORM_SEND_FAILURE.message
                     Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
                 }
+//                _sendFormResult.postValue("Success")
             }
         } else {
             _sendFormResult.value = FormStatus.WRONG_FORM.message
         }
-
     }
 
     private fun formValidation(): Boolean {
