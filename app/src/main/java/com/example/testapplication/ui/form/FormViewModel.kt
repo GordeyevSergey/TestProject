@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
@@ -51,10 +52,16 @@ class FormViewModel : BaseViewModel() {
     fun sendForm() {
         if (formValidation()) {
             CoroutineScope(Dispatchers.IO).launch {
-                val file = File(currentForm.photo?.path.toString())
-                val partPhoto = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+                val title = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.title)
+                val comment = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.description)
+                var photo: MultipartBody.Part? = null
 
-                val response = retrofit.sendForm(currentForm.title, currentForm.description, null)
+                currentForm.photo?.let {
+                    val file = File(it.path)
+                    photo = MultipartBody.Part.createFormData("image", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
+                }
+
+                val response = retrofit.sendForm(title, comment, photo)
                 Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
 
                 if (response.isSuccessful) {
