@@ -16,8 +16,10 @@ import com.example.testapplication.R
 import com.example.testapplication.adapter.ServiceListAdapter
 import com.example.testapplication.databinding.FragmentServicesBinding
 import com.example.testapplication.models.ServiceItem
+import com.example.testapplication.util.ViewModelFactory
 import com.example.testapplication.util.OnServiceItemClick
 import com.example.testapplication.util.OnToast
+import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
 class ServicesFragment : Fragment(), OnServiceItemClick {
 
@@ -29,7 +31,8 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
-        servicesViewModel = ViewModelProviders.of(this).get(ServicesViewModel::class.java)
+        setToolbar()
+        servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ServicesViewModel::class.java)
 
         //Recycler
         serviceListAdapter = ServiceListAdapter(this)
@@ -47,6 +50,12 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         toast = context as OnToast
+    }
+
+    private fun setToolbar() {
+        val toolbar = binding.root.custom_actionbar
+        toolbar.title.setText(R.string.title_services)
+        toolbar.send_form_imagebutton.visibility = View.GONE
     }
 
     override fun onClick(item: ServiceItem) {

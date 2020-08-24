@@ -7,15 +7,17 @@
 
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.services.ServicesFragment" >
+        android:orientation="vertical"
+        tools:context=".ui.services.ServicesFragment">
+
+        <include layout="@layout/custom_toolbar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/services_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        />
-    </RelativeLayout>
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </layout>
