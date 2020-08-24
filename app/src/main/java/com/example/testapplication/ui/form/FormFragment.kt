@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.testapplication.R
 import com.example.testapplication.databinding.FragmentFormBinding
 import com.example.testapplication.util.LogTags
+import com.example.testapplication.util.ViewModelFactory
 
 import com.example.testapplication.util.OnToast
 import com.squareup.picasso.Picasso
@@ -49,7 +50,7 @@ class FormFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
         setToolbar()
-        formViewModel = ViewModelProviders.of(requireActivity()).get(FormViewModel::class.java)
+        formViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(FormViewModel::class.java)
 
         //Observers
         formViewModel.formLiveData.observe(this, Observer {

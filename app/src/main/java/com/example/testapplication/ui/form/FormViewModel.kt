@@ -4,8 +4,9 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.Form
-import com.example.testapplication.ui.BaseViewModel
+import com.example.testapplication.network.ApiService
 import com.example.testapplication.util.FormStatus
 import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +17,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
-class FormViewModel : BaseViewModel() {
+class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     private var currentForm = Form()
 
     private val _formLiveData = MutableLiveData<Form>()
@@ -61,7 +62,7 @@ class FormViewModel : BaseViewModel() {
                     photo = MultipartBody.Part.createFormData("image", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
                 }
 
-                val response = retrofit.sendForm(title, comment, photo)
+                val response = apiClient.sendForm(title, comment, photo)
                 Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
 
                 if (response.isSuccessful) {

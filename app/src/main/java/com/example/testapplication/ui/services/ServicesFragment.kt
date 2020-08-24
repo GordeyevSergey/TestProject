@@ -16,6 +16,7 @@ import com.example.testapplication.R
 import com.example.testapplication.adapter.ServiceListAdapter
 import com.example.testapplication.databinding.FragmentServicesBinding
 import com.example.testapplication.models.ServiceItem
+import com.example.testapplication.util.ViewModelFactory
 import com.example.testapplication.util.OnServiceItemClick
 import com.example.testapplication.util.OnToast
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
@@ -31,7 +32,7 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
         setToolbar()
-        servicesViewModel = ViewModelProviders.of(requireActivity()).get(ServicesViewModel::class.java)
+        servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ServicesViewModel::class.java)
 
         //Recycler
         serviceListAdapter = ServiceListAdapter(this)
