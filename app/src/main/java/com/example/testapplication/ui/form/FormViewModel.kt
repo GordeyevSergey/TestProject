@@ -16,6 +16,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.lang.Exception
 
 class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     private var currentForm = Form()
@@ -32,9 +33,9 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         _formLiveData.value = currentForm
     }
 
-    fun saveTextForm(title: String, desctiption: String) {
-        currentForm.title = title
-        currentForm.description = desctiption
+    fun saveTextForm(name: String, comment: String) {
+        currentForm.name = name
+        currentForm.comment = comment
         _formLiveData.value = currentForm
     }
 
@@ -44,8 +45,8 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     }
 
     private fun clearForm() {
-        currentForm.title = ""
-        currentForm.description = ""
+        currentForm.name = ""
+        currentForm.comment = ""
         currentForm.photo = null
         _formLiveData.postValue(currentForm)
     }
@@ -53,28 +54,30 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     fun sendForm() {
         if (formValidation()) {
             CoroutineScope(Dispatchers.IO).launch {
-                val title = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.title)
-                val comment = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.description)
-                var photo: MultipartBody.Part? = null
+                try {
+                    val name = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.name)
+                    val comment = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.comment)
+                    var photo: MultipartBody.Part? = null
 
-                currentForm.photo?.let {
-                    val file = File(it.path)
-                    photo = MultipartBody.Part.createFormData("image", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
-                }
-
-                val response = apiClient.sendForm(title, comment, photo)
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.result.toString())
-
-                if (response.isSuccessful) {
-                    clearForm()
-                    response.body()?.let {
-                        _sendFormResult.postValue(it.result)
+                    currentForm.photo?.let {
+                        val file = File(it.path)
+                        photo = MultipartBody.Part.createFormData("photo", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
                     }
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
-                } else {
-                    _sendFormResult.postValue(response.errorBody().toString())
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
+
+                    val response = apiClient.sendForm(name, comment, photo)
+
+                    if (response.isSuccessful) {
+                        clearForm()
+                        response.body()?.let {
+                            _sendFormResult.postValue(it.result)
+                        }
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.result.toString())
+                    } else {
+                        _sendFormResult.postValue(response.errorBody().toString())
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
+                    }
+                } catch (e: Exception) {
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, e.toString())
                 }
 
             }
@@ -84,12 +87,12 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     }
 
     private fun formValidation(): Boolean {
-        if (currentForm.title.isBlank() || currentForm.description.isBlank()) {
+        if (currentForm.name.isBlank() || currentForm.comment.isBlank()) {
             return false
         } else {
             currentForm.apply {
-                this.title = this.title.trim()
-                this.description = this.description.trim()
+                this.name = this.name.trim()
+                this.comment = this.comment.trim()
                 _formLiveData.value = this
             }
             return true

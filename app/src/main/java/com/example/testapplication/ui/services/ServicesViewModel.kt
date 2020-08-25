@@ -11,6 +11,8 @@ import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.net.ConnectException
 
 class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
     private val _serviceListLiveData = MutableLiveData<List<ServiceItem>>()
@@ -23,14 +25,17 @@ class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
 
     private fun getServiceList() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = apiClient.getServiceList()
-
-            Log.i(LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.name, LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.logMessage)
-            if (response.isSuccessful) {
-                _serviceListLiveData.postValue(response.body())
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.size.toString())
-            } else {
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
+            try {
+                val response = apiClient.getServiceList()
+                Log.i(LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.name, LogTags.LOG_RETROFIT_INTERACTION_RESPONSE.logMessage)
+                if (response.isSuccessful) {
+                    _serviceListLiveData.postValue(response.body())
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.size.toString())
+                } else {
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
+                }
+            }catch (e: Exception) {
+                Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, e.toString())
             }
         }
     }
