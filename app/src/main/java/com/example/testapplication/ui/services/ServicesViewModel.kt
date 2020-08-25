@@ -6,18 +6,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.ServiceItem
 import com.example.testapplication.network.ApiService
-
 import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Exception
-import java.net.ConnectException
+import java.net.UnknownHostException
 
 class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
     private val _serviceListLiveData = MutableLiveData<List<ServiceItem>>()
     val serviceListLiveData: LiveData<List<ServiceItem>>
         get() = _serviceListLiveData
+
+    private val _errorLiveData = MutableLiveData<String>()
+    val errorLiveData: LiveData<String>
+    get() = _errorLiveData
 
     init {
         getServiceList()
@@ -34,7 +36,8 @@ class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
                 } else {
                     Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
                 }
-            }catch (e: Exception) {
+            }catch (e: UnknownHostException) {
+                _errorLiveData.postValue("Отсутствует соединение")
                 Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, e.toString())
             }
         }

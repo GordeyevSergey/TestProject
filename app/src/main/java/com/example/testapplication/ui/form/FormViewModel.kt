@@ -16,7 +16,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
-import java.lang.Exception
+import java.net.UnknownHostException
 
 class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     private var currentForm = Form()
@@ -76,7 +76,8 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
                         _sendFormResult.postValue(response.errorBody().toString())
                         Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
                     }
-                } catch (e: Exception) {
+                } catch (e: UnknownHostException) {
+                    _sendFormResult.postValue(FormStatus.FORM_SEND_FAILURE.message)
                     Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, e.toString())
                 }
 
