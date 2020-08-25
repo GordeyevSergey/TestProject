@@ -64,14 +64,19 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
 
                 val response = apiClient.sendForm(title, comment, photo)
                 Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
+                Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.result.toString())
 
                 if (response.isSuccessful) {
                     clearForm()
+                    response.body()?.let {
+                        _sendFormResult.postValue(it.result)
+                    }
                     Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.code().toString())
                 } else {
+                    _sendFormResult.postValue(response.errorBody().toString())
                     Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
                 }
-//                _sendFormResult.postValue("Success")
+
             }
         } else {
             _sendFormResult.value = FormStatus.WRONG_FORM.message
