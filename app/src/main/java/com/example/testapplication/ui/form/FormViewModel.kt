@@ -39,8 +39,9 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         _formLiveData.value = currentForm
     }
 
-    fun saveImageForm(photo: Uri) {
+    fun saveImageForm(photo: Uri, realPhotoPath: String?) {
         currentForm.photo = photo
+        currentForm.realPhotoPath = realPhotoPath
         _formLiveData.value = currentForm
     }
 
@@ -48,6 +49,7 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         currentForm.name = ""
         currentForm.comment = ""
         currentForm.photo = null
+        currentForm.realPhotoPath = null
         _formLiveData.postValue(currentForm)
     }
 
@@ -59,8 +61,8 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
                     val comment = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.comment)
                     var photo: MultipartBody.Part? = null
 
-                    currentForm.photo?.let {
-                        val file = File(it.path)
+                    currentForm.realPhotoPath?.let {
+                        val file = File(it)
                         photo = MultipartBody.Part.createFormData("photo", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
                     }
 

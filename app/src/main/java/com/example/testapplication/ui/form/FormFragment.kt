@@ -26,6 +26,7 @@ import com.example.testapplication.util.LogTags
 import com.example.testapplication.util.ViewModelFactory
 
 import com.example.testapplication.util.OnToast
+import com.example.testapplication.util.PhotoUriPathConverter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
@@ -99,9 +100,11 @@ class FormFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            cameraResultPhoto?.let {
-                formViewModel.saveImageForm(it)
-                Log.i(LogTags.LOG_CAMERA_RESULT_SUCCESSFUL.name, it.toString())
+            context?.let { context ->
+                cameraResultPhoto?.let { uri ->
+                    val realPath = PhotoUriPathConverter.convert(context, uri)
+                    formViewModel.saveImageForm(uri, realPath)
+                }
             }
         }
     }
