@@ -44,6 +44,10 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
             serviceListAdapter.setServices(newServiceList)
         })
 
+        servicesViewModel.errorLiveData.observe(this, Observer {
+            toast.showMessage(it)
+        })
+
         return binding.root
     }
 

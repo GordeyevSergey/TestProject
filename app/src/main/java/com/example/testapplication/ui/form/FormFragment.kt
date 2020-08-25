@@ -26,6 +26,7 @@ import com.example.testapplication.util.LogTags
 import com.example.testapplication.util.ViewModelFactory
 
 import com.example.testapplication.util.OnToast
+import com.example.testapplication.util.PhotoUriPathConverter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
@@ -37,6 +38,7 @@ class FormFragment : Fragment() {
 
     private lateinit var binding: FragmentFormBinding
     private lateinit var formViewModel: FormViewModel
+
     //interfaces
     private lateinit var onToast: OnToast
 
@@ -54,8 +56,8 @@ class FormFragment : Fragment() {
 
         //Observers
         formViewModel.formLiveData.observe(this, Observer {
-            binding.textviewFormName.setText(it.title)
-            binding.textviewFormDescription.setText(it.description)
+            binding.textviewFormName.setText(it.name)
+            binding.textviewFormDescription.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
         })
 
@@ -93,14 +95,16 @@ class FormFragment : Fragment() {
                     .error(R.drawable.ic_form_imagebutton)
                     .into(binding.imagebuttonFormPhoto)
         }
-        Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, uri?.path.toString())
+        Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, this::class.qualifiedName.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            cameraResultPhoto?.let {
-                formViewModel.saveImageForm(it)
-                Log.i(LogTags.LOG_CAMERA_RESULT_SUCCESSFUL.name, it.toString())
+            context?.let { context ->
+                cameraResultPhoto?.let { uri ->
+                    val realPath = PhotoUriPathConverter.convert(context, uri)
+                    formViewModel.saveImageForm(uri, realPath)
+                }
             }
         }
     }
@@ -137,10 +141,7 @@ class FormFragment : Fragment() {
     }
 
     private fun startCamera() {
-        val values = ContentValues()
-//        values.put(MediaStore.Images.Media.TITLE, "Pic")
-//        values.put(MediaStore.Images.Media.DESCRIPTION, "Camera pic")
-        cameraResultPhoto = context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        cameraResultPhoto = context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentValues())
 
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraResultPhoto)
@@ -148,7 +149,7 @@ class FormFragment : Fragment() {
     }
 
     private fun saveForm() {
-        formViewModel.saveTextForm(title = binding.textviewFormName.text.toString(), desctiption = binding.textviewFormDescription.text.toString())
+        formViewModel.saveTextForm(binding.textviewFormName.text.toString(), binding.textviewFormDescription.text.toString())
     }
 
     private fun showAlertDialog(message: String) {
