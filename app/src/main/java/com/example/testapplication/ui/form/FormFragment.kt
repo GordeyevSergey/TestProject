@@ -34,6 +34,7 @@ class FormFragment : Fragment() {
     companion object {
         private const val PERMISSION_CODE = 1000
         private const val CAMERA_CODE = 1001
+        private const val CLASS_NAME = "FormFragment/"
     }
 
     private lateinit var binding: FragmentFormBinding
@@ -59,10 +60,13 @@ class FormFragment : Fragment() {
             binding.textviewFormName.setText(it.name)
             binding.textviewFormDescription.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
+            Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form updated")
         })
 
-        formViewModel.sendFormResult.observe(this, Observer {
-            showAlertDialog(it)
+        formViewModel.sendFormResult.observe(this, Observer { result ->
+            result?.let {
+                showAlertDialog(it)
+            }
         })
 
         //Listeners
@@ -95,7 +99,7 @@ class FormFragment : Fragment() {
                     .error(R.drawable.ic_form_imagebutton)
                     .into(binding.imagebuttonFormPhoto)
         }
-        Log.i(LogTags.LOG_FORM_IMAGEBUTTON_SRC_CHANGED.name, this::class.qualifiedName.toString())
+        Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form image changed")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -115,17 +119,17 @@ class FormFragment : Fragment() {
                     context?.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 startCamera()
 
-                Log.i(LogTags.LOG_PERMISSIONS_GRANTED.name, LogTags.LOG_PERMISSIONS_GRANTED.logMessage)
+                Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME GRANTED")
             } else {
                 val permissionList = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 requestPermissions(permissionList, PERMISSION_CODE)
 
-                Log.i(LogTags.LOG_PERMISSIONS_REQUEST.name, LogTags.LOG_PERMISSIONS_REQUEST.logMessage)
+                Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME REQUEST")
             }
         } else {
             startCamera()
 
-            Log.i(LogTags.LOG_PERMISSIONS_GRANTED.name, LogTags.LOG_PERMISSIONS_GRANTED.logMessage)
+            Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME GRANTED")
         }
     }
 
@@ -133,7 +137,7 @@ class FormFragment : Fragment() {
         when (requestCode) {
             PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(LogTags.LOG_PERMISSIONS_GRANTED.name, LogTags.LOG_PERMISSIONS_GRANTED.logMessage)
+                    Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME GRANTED")
                     startCamera()
                 }
             }
@@ -146,6 +150,7 @@ class FormFragment : Fragment() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraResultPhoto)
         startActivityForResult(cameraIntent, CAMERA_CODE)
+        Log.i(LogTags.LOG_CAMERA.name, "$CLASS_NAME camera started")
     }
 
     private fun saveForm() {
@@ -158,10 +163,12 @@ class FormFragment : Fragment() {
                     .setTitle(getString(R.string.alert_dialog_title))
                     .setMessage(message)
                     .setPositiveButton(getString(R.string.alert_dialog_positive_button)) { dialog, _ ->
+                        formViewModel.clearDialogMessage()
                         dialog.dismiss()
                     }
                     .show()
         }
+        Log.i(LogTags.LOG_ALERT_DIALOG.name, "$CLASS_NAME AlertDialog created")
     }
 
     override fun onStop() {

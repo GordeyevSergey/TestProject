@@ -19,6 +19,10 @@ import java.io.File
 import java.net.UnknownHostException
 
 class FormViewModel(private val apiClient: ApiService) : ViewModel() {
+    companion object {
+        private const val CLASS_NAME = "FormViewModel/"
+    }
+
     private var currentForm = Form()
 
     private val _formLiveData = MutableLiveData<Form>()
@@ -57,36 +61,43 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         if (formValidation()) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val name = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.name)
-                    val comment = RequestBody.create(MediaType.parse("multipart/form-data"), currentForm.comment)
+                    val mediaType = MediaType.parse("multipart/form-data")
+                    val name = RequestBody.create(mediaType, currentForm.name)
+                    val comment = RequestBody.create(mediaType, currentForm.comment)
                     var photo: MultipartBody.Part? = null
 
                     currentForm.realPhotoPath?.let {
                         val file = File(it)
-                        photo = MultipartBody.Part.createFormData("photo", file.name, RequestBody.create(MediaType.parse("multipart/form-data"), file))
+                        photo = MultipartBody.Part.createFormData("photo", file.name, RequestBody.create(mediaType, file))
                     }
 
                     val response = apiClient.sendForm(name, comment, photo)
-
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Response")
                     if (response.isSuccessful) {
                         clearForm()
                         response.body()?.let {
                             _sendFormResult.postValue(it.result)
                         }
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION_SUCCESS.name, response.body()?.result.toString())
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Success")
                     } else {
                         _sendFormResult.postValue(response.errorBody().toString())
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, response.errorBody().toString())
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Failure")
                     }
-                } catch (e: UnknownHostException) {
+                } catch (exception: UnknownHostException) {
                     _sendFormResult.postValue(FormStatus.FORM_SEND_FAILURE.message)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION_FAILURE.name, e.toString())
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME $exception")
                 }
 
             }
         } else {
             _sendFormResult.value = FormStatus.WRONG_FORM.message
+            Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME Incorrect form")
         }
+    }
+
+    fun clearDialogMessage() {
+        _sendFormResult.value = null
+        Log.i(LogTags.LOG_ALERT_DIALOG.name, "$CLASS_NAME Message cleared")
     }
 
     private fun formValidation(): Boolean {
