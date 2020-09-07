@@ -43,8 +43,7 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         _formLiveData.value = currentForm
     }
 
-    fun saveImageForm(photo: Uri, realPhotoPath: String?) {
-        currentForm.photo = photo
+    fun saveImageForm(realPhotoPath: String?) {
         currentForm.realPhotoPath = realPhotoPath
         _formLiveData.value = currentForm
     }
@@ -52,7 +51,6 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
     private fun clearForm() {
         currentForm.name = ""
         currentForm.comment = ""
-        currentForm.photo = null
         currentForm.realPhotoPath = null
         _formLiveData.postValue(currentForm)
     }
