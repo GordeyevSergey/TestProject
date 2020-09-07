@@ -1,7 +1,10 @@
 package com.example.testapplication.ui.form
 
+import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,13 +20,18 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.net.UnknownHostException
+import java.text.SimpleDateFormat
+import java.util.*
 
-class FormViewModel(private val apiClient: ApiService) : ViewModel() {
+class FormViewModel(private val context: Context,
+                    private val apiClient: ApiService) : ViewModel() {
     companion object {
         private const val CLASS_NAME = "FormViewModel/"
     }
 
     private var currentForm = Form()
+
+    private lateinit var photoFile: File
 
     private val _formLiveData = MutableLiveData<Form>()
     val formLiveData: LiveData<Form>
@@ -43,15 +51,15 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
         _formLiveData.value = currentForm
     }
 
-    fun saveImageForm(realPhotoPath: String?) {
-        currentForm.realPhotoPath = realPhotoPath
+    fun saveImageForm() {
+        currentForm.photo = photoFile
         _formLiveData.value = currentForm
     }
 
     private fun clearForm() {
         currentForm.name = ""
         currentForm.comment = ""
-        currentForm.realPhotoPath = null
+        currentForm.photo = null
         _formLiveData.postValue(currentForm)
     }
 
@@ -64,9 +72,8 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
                     val comment = RequestBody.create(mediaType, currentForm.comment)
                     var photo: MultipartBody.Part? = null
 
-                    currentForm.realPhotoPath?.let {
-                        val file = File(it)
-                        photo = MultipartBody.Part.createFormData("photo", file.name, RequestBody.create(mediaType, file))
+                    currentForm.photo?.let {
+                        photo = MultipartBody.Part.createFormData("photo", it.name, RequestBody.create(mediaType, it))
                     }
 
                     val response = apiClient.sendForm(name, comment, photo)
@@ -110,4 +117,14 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
             return true
         }
     }
+
+    fun createPhotoFileAndGetUri(): Uri {
+        val dir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val fileSuffix = ".jpg"
+        val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
+
+        return FileProvider.getUriForFile(context, "com.example.testapplication", photoFile)
+    }
+
 }
