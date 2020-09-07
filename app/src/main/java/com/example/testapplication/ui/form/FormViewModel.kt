@@ -37,8 +37,8 @@ class FormViewModel(private val context: Context,
     val formLiveData: LiveData<Form>
         get() = _formLiveData
 
-    private val _sendFormResult = MutableLiveData<String>()
-    val sendFormResult: LiveData<String>
+    private val _sendFormResult = MutableLiveData<String?>()
+    val sendFormResult: LiveData<String?>
         get() = _sendFormResult
 
     init {
