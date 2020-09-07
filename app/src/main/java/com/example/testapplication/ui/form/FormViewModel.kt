@@ -78,7 +78,7 @@ class FormViewModel(private val apiClient: ApiService) : ViewModel() {
                         }
                         Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Success")
                     } else {
-                        _sendFormResult.postValue(response.errorBody().toString())
+                        _sendFormResult.postValue(response.message())
                         Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Failure")
                     }
                 } catch (exception: UnknownHostException) {
