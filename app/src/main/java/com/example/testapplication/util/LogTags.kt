@@ -6,5 +6,6 @@ enum class LogTags {
     LOG_CAMERA,
     LOG_FORM,
     LOG_RECYCLERVIEW,
-    LOG_ALERT_DIALOG
+    LOG_ALERT_DIALOG,
+    LOG_STORAGE
 }
