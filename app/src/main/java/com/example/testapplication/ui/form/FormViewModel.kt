@@ -124,6 +124,7 @@ class FormViewModel(private val context: Context,
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
 
+        Log.i(LogTags.LOG_STORAGE.name, "FILE CREATED: ${photoFile.absolutePath}")
         return FileProvider.getUriForFile(context, "com.example.testapplication", photoFile)
     }
 
