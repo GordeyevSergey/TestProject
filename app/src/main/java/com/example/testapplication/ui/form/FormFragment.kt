@@ -114,14 +114,12 @@ class FormFragment : Fragment() {
 
     private fun checkPermissionsAndStartCamera() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (context?.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    context?.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (context?.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 startCamera()
 
                 Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME GRANTED")
             } else {
-                val permissionList = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                requestPermissions(permissionList, PERMISSION_CODE)
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_CODE)
 
                 Log.i(LogTags.LOG_PERMISSIONS.name, "$CLASS_NAME REQUEST")
             }
@@ -171,7 +169,7 @@ class FormFragment : Fragment() {
         val dir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val fileSuffix = ".jpg"
         val filePrefix: String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         } else {
             "DEFAULT"
         }
