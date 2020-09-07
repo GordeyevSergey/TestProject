@@ -32,7 +32,9 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
         setToolbar()
-        servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory()).get(ServicesViewModel::class.java)
+        context?.let { context ->
+            servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(context)).get(ServicesViewModel::class.java)
+        }
 
         //Recycler
         serviceListAdapter = ServiceListAdapter(this)
