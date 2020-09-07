@@ -1,12 +1,12 @@
 package com.example.testapplication.ui.services
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,7 +18,6 @@ import com.example.testapplication.databinding.FragmentServicesBinding
 import com.example.testapplication.models.ServiceItem
 import com.example.testapplication.util.ViewModelFactory
 import com.example.testapplication.util.OnServiceItemClick
-import com.example.testapplication.util.OnToast
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
 
 class ServicesFragment : Fragment(), OnServiceItemClick {
@@ -27,7 +26,6 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     private lateinit var servicesViewModel: ServicesViewModel
 
     private lateinit var serviceListAdapter: ServiceListAdapter
-    private lateinit var toast: OnToast
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
@@ -42,20 +40,15 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
         binding.servicesList.layoutManager = LinearLayoutManager(context)
 
         //Observers
-        servicesViewModel.serviceListLiveData.observe(this, Observer { newServiceList: List<ServiceItem> ->
+        servicesViewModel.serviceListLiveData.observe(viewLifecycleOwner, Observer { newServiceList: List<ServiceItem> ->
             serviceListAdapter.setServices(newServiceList)
         })
 
-        servicesViewModel.errorLiveData.observe(this, Observer {
-            toast.showMessage(it)
+        servicesViewModel.errorLiveData.observe(viewLifecycleOwner, Observer {
+            showToast(it)
         })
 
         return binding.root
-    }
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        toast = context as OnToast
     }
 
     private fun setToolbar() {
@@ -65,7 +58,11 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     }
 
     override fun onClick(item: ServiceItem) {
-        toast.showMessage("${item.title} открывается")
+        showToast("${item.title} открывается")
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.link)))
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,13 +1,13 @@
 package com.example.testapplication.ui.form
 
-import android.app.Activity
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 
@@ -25,12 +25,13 @@ import java.io.File
 
 class FormFragment : Fragment() {
     companion object {
-        private const val CAMERA_CODE = 1001
         private const val CLASS_NAME = "FormFragment/"
     }
 
     private lateinit var binding: FragmentFormBinding
     private lateinit var formViewModel: FormViewModel
+
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Uri>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
@@ -39,14 +40,14 @@ class FormFragment : Fragment() {
             formViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(context)).get(FormViewModel::class.java)
         }
         //Observers
-        formViewModel.formLiveData.observe(this, Observer {
+        formViewModel.formLiveData.observe(viewLifecycleOwner, Observer {
             binding.textviewFormName.setText(it.name)
             binding.textviewFormDescription.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
             Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form updated")
         })
 
-        formViewModel.sendFormResult.observe(this, Observer { result ->
+        formViewModel.sendFormResult.observe(viewLifecycleOwner, Observer { result ->
             result?.let {
                 showAlertDialog(it)
             }
@@ -54,7 +55,13 @@ class FormFragment : Fragment() {
 
         //Listeners
         binding.imagebuttonFormPhoto.setOnClickListener {
-            startCamera()
+            activityResultLauncher.launch(formViewModel.createPhotoFileAndGetUri())
+
+            Log.i(LogTags.LOG_CAMERA.name, "$CLASS_NAME camera started")
+        }
+
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+            formViewModel.saveImageForm()
         }
 
         return binding.root
@@ -83,25 +90,6 @@ class FormFragment : Fragment() {
                     .into(binding.imagebuttonFormPhoto)
         }
         Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form image changed")
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CAMERA_CODE && resultCode == Activity.RESULT_OK) {
-            formViewModel.saveImageForm()
-        }
-    }
-
-    private fun startCamera() {
-        context?.let { context ->
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { intent ->
-                intent.resolveActivity(context.packageManager).also {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, formViewModel.createPhotoFileAndGetUri())
-                    startActivityForResult(intent, CAMERA_CODE)
-
-                    Log.i(LogTags.LOG_CAMERA.name, "$CLASS_NAME camera started")
-                }
-            }
-        }
     }
 
 
