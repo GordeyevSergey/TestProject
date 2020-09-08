@@ -15,10 +15,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.rv_services_item.view.*
 
 class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerView.Adapter<ServiceListAdapter.ServiceViewHolder>() {
-    companion object {
-        private const val CLASS_NAME = "ServiceListAdapter/"
-    }
-
     private var serviceList: List<ServiceItem> = ArrayList()
 
     class ServiceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,7 +27,7 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
         val viewHolder = ServiceViewHolder(view)
         view.setOnClickListener {
             listener.onClick(serviceList[viewHolder.adapterPosition])
-            Log.i(LogTags.LOG_RECYCLERVIEW.name, "$CLASS_NAME ${serviceList[viewHolder.adapterPosition].title} clicked")
+            Log.i(LogTags.LOG_RECYCLERVIEW.name, "${ServiceListAdapter::class} ${serviceList[viewHolder.adapterPosition].title} clicked")
         }
         return viewHolder
     }
@@ -54,6 +50,6 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
     fun setServices(newServiceList: List<ServiceItem>) {
         serviceList = newServiceList
         notifyDataSetChanged()
-        Log.i(LogTags.LOG_RECYCLERVIEW.name, "$CLASS_NAME service list updated")
+        Log.i(LogTags.LOG_RECYCLERVIEW.name, "${ServiceListAdapter::class} service list updated")
     }
 }

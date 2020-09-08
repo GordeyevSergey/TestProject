@@ -24,10 +24,6 @@ import kotlinx.android.synthetic.main.custom_toolbar.view.*
 import java.io.File
 
 class FormFragment : Fragment() {
-    companion object {
-        private const val CLASS_NAME = "FormFragment/"
-    }
-
     private lateinit var binding: FragmentFormBinding
     private lateinit var formViewModel: FormViewModel
 
@@ -44,7 +40,7 @@ class FormFragment : Fragment() {
             binding.textviewFormName.setText(it.name)
             binding.textviewFormDescription.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
-            Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form updated")
+            Log.i(LogTags.LOG_FORM.name, "${FormFragment::class} form updated")
         })
 
         formViewModel.sendFormResult.observe(viewLifecycleOwner, Observer { result ->
@@ -57,7 +53,7 @@ class FormFragment : Fragment() {
         binding.imagebuttonFormPhoto.setOnClickListener {
             activityResultLauncher.launch(formViewModel.createPhotoFileAndGetUri())
 
-            Log.i(LogTags.LOG_CAMERA.name, "$CLASS_NAME camera started")
+            Log.i(LogTags.LOG_CAMERA.name, "${FormFragment::class} camera started")
         }
 
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
@@ -89,7 +85,7 @@ class FormFragment : Fragment() {
                     .error(R.drawable.ic_form_imagebutton)
                     .into(binding.imagebuttonFormPhoto)
         }
-        Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME form image changed")
+        Log.i(LogTags.LOG_FORM.name, "${FormFragment::class} form image changed")
     }
 
 
@@ -108,7 +104,7 @@ class FormFragment : Fragment() {
                     }
                     .show()
         }
-        Log.i(LogTags.LOG_ALERT_DIALOG.name, "$CLASS_NAME AlertDialog created")
+        Log.i(LogTags.LOG_ALERT_DIALOG.name, "${FormFragment::class} AlertDialog created")
     }
 
     override fun onStop() {
