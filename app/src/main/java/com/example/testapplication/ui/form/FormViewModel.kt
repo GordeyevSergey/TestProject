@@ -3,7 +3,6 @@ package com.example.testapplication.ui.form
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.Form
 import com.example.testapplication.network.ApiService
 import com.example.testapplication.util.FormStatus
-import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,32 +71,26 @@ class FormViewModel(private val context: Context,
                     }
 
                     val response = apiClient.sendForm(name, comment, photo)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Response")
                     if (response.isSuccessful) {
                         clearForm()
                         response.body()?.let {
                             _sendFormResult.postValue(it.result)
                         }
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Success")
                     } else {
                         _sendFormResult.postValue(response.message())
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Failure")
                     }
                 } catch (exception: UnknownHostException) {
                     _sendFormResult.postValue(FormStatus.FORM_SEND_FAILURE.message)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} $exception")
                 }
 
             }
         } else {
             _sendFormResult.value = FormStatus.WRONG_FORM.message
-            Log.i(LogTags.LOG_FORM.name, "${FormViewModel::class} Incorrect form")
         }
     }
 
     fun clearDialogMessage() {
         _sendFormResult.value = null
-        Log.i(LogTags.LOG_ALERT_DIALOG.name, "${FormViewModel::class} Message cleared")
     }
 
     private fun formValidation(): Boolean {
@@ -120,7 +112,6 @@ class FormViewModel(private val context: Context,
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
 
-        Log.i(LogTags.LOG_STORAGE.name, "FILE CREATED: ${photoFile.absolutePath}")
         return FileProvider.getUriForFile(context, "com.example.testapplication", photoFile)
     }
 
