@@ -3,4 +3,5 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">job.softinvent.ru</domain>
     </domain-config>
+
 </network-security-config>
