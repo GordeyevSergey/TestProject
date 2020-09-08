@@ -41,6 +41,7 @@ dependencies {
     def lifecycle_ver = '1.1.1'
     def picasso_ver = '2.71828'
     def fragment_ver = '1.3.0-alpha08'
+    def timber_ver = '4.7.1'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -62,6 +63,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_ver"
     //picasso
     implementation "com.squareup.picasso:picasso:$picasso_ver"
+    //timber
+    implementation "com.jakewharton.timber:timber:$timber_ver"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

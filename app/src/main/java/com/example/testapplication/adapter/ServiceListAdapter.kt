@@ -11,6 +11,7 @@ import com.example.testapplication.R
 import com.example.testapplication.util.OnServiceItemClick
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.rv_services_item.view.*
+import timber.log.Timber
 
 class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerView.Adapter<ServiceListAdapter.ServiceViewHolder>() {
     private var serviceList: List<ServiceItem> = ArrayList()
@@ -25,6 +26,7 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
         val viewHolder = ServiceViewHolder(view)
         view.setOnClickListener {
             listener.onClick(serviceList[viewHolder.adapterPosition])
+            Timber.d("${serviceList[viewHolder.adapterPosition].title} clicked")
         }
         return viewHolder
     }
@@ -47,5 +49,6 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
     fun setServices(newServiceList: List<ServiceItem>) {
         serviceList = newServiceList
         notifyDataSetChanged()
+        Timber.d("service list updated")
     }
 }

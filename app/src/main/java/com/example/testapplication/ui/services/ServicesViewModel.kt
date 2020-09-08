@@ -8,6 +8,7 @@ import com.example.testapplication.network.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
@@ -29,9 +30,13 @@ class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
                 val response = apiClient.getServiceList()
                 if (response.isSuccessful) {
                     _serviceListLiveData.postValue(response.body())
+                    Timber.d("get service list successful")
+                } else {
+                    Timber.d("get service list failure")
                 }
             } catch (exception: UnknownHostException) {
                 _errorLiveData.postValue("Отсутствует интернет соединение")
+                Timber.e(exception)
             }
         }
     }
