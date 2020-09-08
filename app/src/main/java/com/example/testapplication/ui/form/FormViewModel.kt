@@ -25,10 +25,6 @@ import java.util.*
 
 class FormViewModel(private val context: Context,
                     private val apiClient: ApiService) : ViewModel() {
-    companion object {
-        private const val CLASS_NAME = "FormViewModel/"
-    }
-
     private var currentForm = Form()
 
     private lateinit var photoFile: File
@@ -77,32 +73,32 @@ class FormViewModel(private val context: Context,
                     }
 
                     val response = apiClient.sendForm(name, comment, photo)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Response")
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Response")
                     if (response.isSuccessful) {
                         clearForm()
                         response.body()?.let {
                             _sendFormResult.postValue(it.result)
                         }
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Success")
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Success")
                     } else {
                         _sendFormResult.postValue(response.message())
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME Failure")
+                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Failure")
                     }
                 } catch (exception: UnknownHostException) {
                     _sendFormResult.postValue(FormStatus.FORM_SEND_FAILURE.message)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "$CLASS_NAME $exception")
+                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} $exception")
                 }
 
             }
         } else {
             _sendFormResult.value = FormStatus.WRONG_FORM.message
-            Log.i(LogTags.LOG_FORM.name, "$CLASS_NAME Incorrect form")
+            Log.i(LogTags.LOG_FORM.name, "${FormViewModel::class} Incorrect form")
         }
     }
 
     fun clearDialogMessage() {
         _sendFormResult.value = null
-        Log.i(LogTags.LOG_ALERT_DIALOG.name, "$CLASS_NAME Message cleared")
+        Log.i(LogTags.LOG_ALERT_DIALOG.name, "${FormViewModel::class} Message cleared")
     }
 
     private fun formValidation(): Boolean {
