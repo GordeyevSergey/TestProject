@@ -6,7 +6,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class ServiceRepository(val api: ApiService) : BaseRepository() {
+class ServiceRepository(private val api: ApiService) : BaseRepository() {
     suspend fun getServices(): List<ServiceItem>? {
         return safeApiCall(
                 call = { api.getServiceList() },
@@ -24,9 +24,12 @@ class ServiceRepository(val api: ApiService) : BaseRepository() {
             photo = MultipartBody.Part.createFormData("photo", it.name, RequestBody.create(mediaType, it))
         }
 
-        return safeApiCall(
+        safeApiCall(
                 call = { api.sendForm(name, comment, photo) },
                 error = "send form error"
-        )?.result
+        )?.let {
+            return it.message
+        }
+        return null
     }
 }
