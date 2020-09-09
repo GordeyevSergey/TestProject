@@ -8,13 +8,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.testapplication.models.Form
-import com.example.testapplication.network.ApiService
+import com.example.testapplication.network.ServiceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import timber.log.Timber
 import java.io.File
 import java.net.UnknownHostException
@@ -22,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class FormViewModel(application: Application,
-                    private val apiClient: ApiService) : AndroidViewModel(application) {
+                    private val repository: ServiceRepository) : AndroidViewModel(application) {
     private var currentForm = Form()
 
     private lateinit var photoFile: File
@@ -64,31 +61,14 @@ class FormViewModel(application: Application,
         if (formValidation()) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val mediaType = MediaType.parse("multipart/form-data")
-                    val name = RequestBody.create(mediaType, currentForm.name)
-                    val comment = RequestBody.create(mediaType, currentForm.comment)
-                    var photo: MultipartBody.Part? = null
-
-                    currentForm.photo?.let {
-                        photo = MultipartBody.Part.createFormData("photo", it.name, RequestBody.create(mediaType, it))
-                    }
-
-                    val response = apiClient.sendForm(name, comment, photo)
-                    if (response.isSuccessful) {
+                    repository.sendForm(currentForm)?.let {
                         clearForm()
-                        response.body()?.let {
-                            _sendFormResult.postValue(it.result)
-                        }
-                        Timber.d("send form successful")
-                    } else {
-                        _sendFormResult.postValue(response.message())
-                        Timber.d("send form failure")
+                        _sendFormResult.postValue(it)
                     }
                 } catch (exception: UnknownHostException) {
                     _sendFormResult.postValue("Отсутствует интернет соединение")
                     Timber.e(exception)
                 }
-
             }
         } else {
             _sendFormResult.value = "Необходимо заполнить все поля"

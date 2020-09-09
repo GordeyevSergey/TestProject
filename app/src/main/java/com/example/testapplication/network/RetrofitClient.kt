@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ApiClient {
+class RetrofitClient {
     companion object {
         private const val BASE_URL = "http://job.softinvent.ru/"
 
