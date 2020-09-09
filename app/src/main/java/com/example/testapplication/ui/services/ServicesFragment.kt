@@ -30,8 +30,8 @@ class ServicesFragment : Fragment(), OnServiceItemClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_services, container, false)
         setToolbar()
-        context?.let { context ->
-            servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(context)).get(ServicesViewModel::class.java)
+        activity?.application?.let {
+            servicesViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(it)).get(ServicesViewModel::class.java)
         }
 
         //Recycler

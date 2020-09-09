@@ -1,12 +1,12 @@
 package com.example.testapplication.ui.form
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.Form
 import com.example.testapplication.network.ApiService
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +21,8 @@ import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FormViewModel(private val context: Context,
-                    private val apiClient: ApiService) : ViewModel() {
+class FormViewModel(application: Application,
+                    private val apiClient: ApiService) : AndroidViewModel(application) {
     private var currentForm = Form()
 
     private lateinit var photoFile: File
@@ -117,13 +117,13 @@ class FormViewModel(private val context: Context,
     }
 
     fun createPhotoFileAndGetUri(): Uri {
-        val dir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val dir: File? = getApplication<Application>().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val fileSuffix = ".jpg"
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
         Timber.d("photo file created")
 
-        return FileProvider.getUriForFile(context, "com.example.testapplication", photoFile)
+        return FileProvider.getUriForFile(getApplication<Application>().applicationContext, "com.example.testapplication", photoFile)
     }
 
 }

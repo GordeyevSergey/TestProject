@@ -31,9 +31,10 @@ class FormFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_form, container, false)
         setToolbar()
-        context?.let { context ->
-            formViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(context)).get(FormViewModel::class.java)
+        activity?.application?.let {
+            formViewModel = ViewModelProviders.of(requireActivity(), ViewModelFactory(it)).get(FormViewModel::class.java)
         }
+
         //Observers
         formViewModel.formLiveData.observe(viewLifecycleOwner, Observer {
             binding.textviewFormName.setText(it.name)
