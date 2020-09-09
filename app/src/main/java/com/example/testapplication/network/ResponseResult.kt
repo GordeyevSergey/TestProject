@@ -1,6 +1,6 @@
 package com.example.testapplication.network
 
-sealed class ResponseResult<out T : Any> {
-    class Success<out T: Any>(val data: T): ResponseResult<T>()
-    class Error<out T: Any>(val message: T): ResponseResult<T>()
+sealed class ResponseResult<T>(val data: T? = null, val message: String? = null) {
+    class Success<T>(data: T) : ResponseResult<T>(data)
+    class Error<T>(message: String, data: T? = null) : ResponseResult<T>(data, message)
 }
