@@ -121,6 +121,7 @@ class FormViewModel(private val application: Application,
         val fileSuffix = ".jpg"
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
+        Timber.d("photo file created")
 
         return FileProvider.getUriForFile(application, "com.example.testapplication", photoFile)
     }
