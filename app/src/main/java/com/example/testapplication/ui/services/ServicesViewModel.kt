@@ -1,15 +1,14 @@
 package com.example.testapplication.ui.services
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.ServiceItem
 import com.example.testapplication.network.ApiService
-import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
@@ -29,16 +28,15 @@ class ServicesViewModel(private val apiClient: ApiService) : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = apiClient.getServiceList()
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${ServicesViewModel::class} Response")
                 if (response.isSuccessful) {
                     _serviceListLiveData.postValue(response.body())
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${ServicesViewModel::class} Success")
+                    Timber.d("get service list successful")
                 } else {
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${ServicesViewModel::class} Failure")
+                    Timber.d("get service list failure")
                 }
             } catch (exception: UnknownHostException) {
                 _errorLiveData.postValue("Отсутствует интернет соединение")
-                Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${ServicesViewModel::class} $exception")
+                Timber.e(exception)
             }
         }
     }

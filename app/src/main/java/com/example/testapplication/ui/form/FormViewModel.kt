@@ -3,21 +3,19 @@ package com.example.testapplication.ui.form
 import android.app.Application
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.testapplication.models.Form
 import com.example.testapplication.network.ApiService
-import com.example.testapplication.util.FormStatus
-import com.example.testapplication.util.LogTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import timber.log.Timber
 import java.io.File
 import java.net.UnknownHostException
 import java.text.SimpleDateFormat
@@ -45,11 +43,13 @@ class FormViewModel(private val application: Application,
         currentForm.name = name
         currentForm.comment = comment
         _formLiveData.value = currentForm
+        Timber.d("form data: text saved")
     }
 
     fun saveImageForm() {
         currentForm.photo = photoFile
         _formLiveData.value = currentForm
+        Timber.d("form data: image saved")
     }
 
     private fun clearForm() {
@@ -57,6 +57,7 @@ class FormViewModel(private val application: Application,
         currentForm.comment = ""
         currentForm.photo = null
         _formLiveData.postValue(currentForm)
+        Timber.d("form data: cleared")
     }
 
     fun sendForm() {
@@ -73,36 +74,36 @@ class FormViewModel(private val application: Application,
                     }
 
                     val response = apiClient.sendForm(name, comment, photo)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Response")
                     if (response.isSuccessful) {
                         clearForm()
                         response.body()?.let {
                             _sendFormResult.postValue(it.result)
                         }
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Success")
+                        Timber.d("send form successful")
                     } else {
                         _sendFormResult.postValue(response.message())
-                        Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} Failure")
+                        Timber.d("send form failure")
                     }
                 } catch (exception: UnknownHostException) {
-                    _sendFormResult.postValue(FormStatus.FORM_SEND_FAILURE.message)
-                    Log.i(LogTags.LOG_RETROFIT_INTERACTION.name, "${FormViewModel::class} $exception")
+                    _sendFormResult.postValue("Отсутствует интернет соединение")
+                    Timber.e(exception)
                 }
 
             }
         } else {
-            _sendFormResult.value = FormStatus.WRONG_FORM.message
-            Log.i(LogTags.LOG_FORM.name, "${FormViewModel::class} Incorrect form")
+            _sendFormResult.value = "Необходимо заполнить все поля"
+            Timber.d("form have empty fields")
         }
     }
 
     fun clearDialogMessage() {
         _sendFormResult.value = null
-        Log.i(LogTags.LOG_ALERT_DIALOG.name, "${FormViewModel::class} Message cleared")
+        Timber.d("result of sending cleared")
     }
 
     private fun formValidation(): Boolean {
         if (currentForm.name.isBlank() || currentForm.comment.isBlank()) {
+            Timber.d("form validation: invalid")
             return false
         } else {
             currentForm.apply {
@@ -110,6 +111,7 @@ class FormViewModel(private val application: Application,
                 this.comment = this.comment.trim()
                 _formLiveData.value = this
             }
+            Timber.d("form validation: valid")
             return true
         }
     }
@@ -119,7 +121,7 @@ class FormViewModel(private val application: Application,
         val fileSuffix = ".jpg"
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
-        
+
         return FileProvider.getUriForFile(application, "com.example.testapplication", photoFile)
     }
 

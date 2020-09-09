@@ -1,6 +1,5 @@
 package com.example.testapplication.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testapplication.models.ServiceItem
 import com.example.testapplication.R
-import com.example.testapplication.util.LogTags
 import com.example.testapplication.util.OnServiceItemClick
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.rv_services_item.view.*
+import timber.log.Timber
 
 class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerView.Adapter<ServiceListAdapter.ServiceViewHolder>() {
     private var serviceList: List<ServiceItem> = ArrayList()
@@ -27,7 +26,7 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
         val viewHolder = ServiceViewHolder(view)
         view.setOnClickListener {
             listener.onClick(serviceList[viewHolder.adapterPosition])
-            Log.i(LogTags.LOG_RECYCLERVIEW.name, "${ServiceListAdapter::class} ${serviceList[viewHolder.adapterPosition].title} clicked")
+            Timber.d("${serviceList[viewHolder.adapterPosition].title} clicked")
         }
         return viewHolder
     }
@@ -50,6 +49,6 @@ class ServiceListAdapter(private val listener: OnServiceItemClick) : RecyclerVie
     fun setServices(newServiceList: List<ServiceItem>) {
         serviceList = newServiceList
         notifyDataSetChanged()
-        Log.i(LogTags.LOG_RECYCLERVIEW.name, "${ServiceListAdapter::class} service list updated")
+        Timber.d("service list updated")
     }
 }

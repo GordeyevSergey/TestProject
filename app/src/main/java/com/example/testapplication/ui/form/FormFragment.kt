@@ -2,7 +2,6 @@ package com.example.testapplication.ui.form
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.testapplication.R
 import com.example.testapplication.databinding.FragmentFormBinding
-import com.example.testapplication.util.LogTags
 import com.example.testapplication.util.ViewModelFactory
 
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_toolbar.view.*
+import timber.log.Timber
 import java.io.File
 
 class FormFragment : Fragment() {
@@ -41,20 +40,19 @@ class FormFragment : Fragment() {
             binding.textviewFormName.setText(it.name)
             binding.textviewFormDescription.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
-            Log.i(LogTags.LOG_FORM.name, "${FormFragment::class} form updated")
+            Timber.d("form updated")
         })
-
         formViewModel.sendFormResult.observe(viewLifecycleOwner, Observer { result ->
             result?.let {
                 showAlertDialog(it)
             }
+            Timber.d("result of sending catched: $result")
         })
 
         //Listeners
         binding.imagebuttonFormPhoto.setOnClickListener {
             activityResultLauncher.launch(formViewModel.createPhotoFileAndGetUri())
-
-            Log.i(LogTags.LOG_CAMERA.name, "${FormFragment::class} camera started")
+            Timber.d("image button clicked")
         }
 
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
@@ -79,14 +77,15 @@ class FormFragment : Fragment() {
     private fun changeFormImageButtonSrc(photo: File?) {
         if (photo == null) {
             binding.imagebuttonFormPhoto.setImageResource(R.drawable.ic_form_imagebutton)
+            Timber.d("image button src default")
         } else {
             Picasso.get()
                     .load(photo)
                     .resizeDimen(R.dimen.form_photo_size, R.dimen.form_photo_size)
                     .error(R.drawable.ic_form_imagebutton)
                     .into(binding.imagebuttonFormPhoto)
+            Timber.d("image button src changed")
         }
-        Log.i(LogTags.LOG_FORM.name, "${FormFragment::class} form image changed")
     }
 
 
@@ -105,7 +104,7 @@ class FormFragment : Fragment() {
                     }
                     .show()
         }
-        Log.i(LogTags.LOG_ALERT_DIALOG.name, "${FormFragment::class} AlertDialog created")
+        Timber.d("alert dialog message: $message")
     }
 
     override fun onStop() {
