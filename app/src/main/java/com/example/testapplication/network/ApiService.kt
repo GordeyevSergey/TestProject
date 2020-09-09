@@ -1,6 +1,6 @@
 package com.example.testapplication.network
 
-import com.example.testapplication.models.FormResultBody
+import com.example.testapplication.models.MessageBody
 import com.example.testapplication.models.ServiceItem
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -18,5 +18,5 @@ interface ApiService {
     @POST("/upload.php")
     suspend fun sendForm(@Part("name") name: RequestBody,
                          @Part("comment") comment: RequestBody,
-                         @Part photo: MultipartBody.Part?): Response<FormResultBody>
+                         @Part photo: MultipartBody.Part?): Response<MessageBody>
 }

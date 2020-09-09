@@ -1,5 +1,6 @@
 package com.example.testapplication.network
 
+import com.example.testapplication.models.MessageBody
 import retrofit2.Response
 import timber.log.Timber
 
@@ -25,7 +26,7 @@ open class BaseRepository {
             return if (it.isSuccessful) {
                 ResponseResult.Success(it.body()!!)
             } else {
-                ResponseResult.Error(it.message() as T)
+                ResponseResult.Error(MessageBody(it.message()) as T)
             }
         }
     }

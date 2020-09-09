@@ -2,6 +2,6 @@ package com.example.testapplication.models
 
 import com.google.gson.annotations.SerializedName
 
-data class FormResultBody(
+data class MessageBody(
         @SerializedName("filename")
-        val result: String)
+        val message: String)
