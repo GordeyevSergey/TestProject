@@ -1,6 +1,6 @@
 package com.example.testapplication.ui.form
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -23,7 +23,7 @@ import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FormViewModel(private val context: Context,
+class FormViewModel(private val application: Application,
                     private val apiClient: ApiService) : ViewModel() {
     private var currentForm = Form()
 
@@ -115,13 +115,13 @@ class FormViewModel(private val context: Context,
     }
 
     fun createPhotoFileAndGetUri(): Uri {
-        val dir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val dir: File? = application.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val fileSuffix = ".jpg"
         val filePrefix: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         photoFile = File.createTempFile(filePrefix, fileSuffix, dir)
 
         Log.i(LogTags.LOG_STORAGE.name, "FILE CREATED: ${photoFile.absolutePath}")
-        return FileProvider.getUriForFile(context, "com.example.testapplication", photoFile)
+        return FileProvider.getUriForFile(application, "com.example.testapplication", photoFile)
     }
 
 }
