@@ -12,4 +12,5 @@
     <dimen name="form_textview_margin_top">5dp</dimen>
     <dimen name="form_photo_size">150dp</dimen>
     <dimen name="form_photo_margin_top">10dp</dimen>
+    <dimen name="margins_edit_text">8dp</dimen>
 </resources>

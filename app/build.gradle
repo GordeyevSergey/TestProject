@@ -42,6 +42,7 @@ dependencies {
     def picasso_ver = '2.71828'
     def fragment_ver = '1.3.0-alpha08'
     def timber_ver = '4.7.1'
+    def material_ver = '1.2.1'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -52,6 +53,9 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment-ktx:$arch_navigation_ver"
     implementation "android.arch.navigation:navigation-ui-ktx:$arch_navigation_ver"
     implementation "android.arch.lifecycle:extensions:$lifecycle_ver"
+
+    //material
+    implementation "com.google.android.material:material:$material_ver"
 
     implementation "androidx.fragment:fragment-ktx:$fragment_ver"
     //ui components

@@ -12,32 +12,57 @@
         android:layout_height="match_parent"
         tools:context=".ui.form.FormFragment">
 
-        <include layout="@layout/custom_toolbar"/>
+        <include layout="@layout/custom_toolbar" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textview_form_name"
-            android:layout_width="match_parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/form_textview_margin_top"
-            android:autofillHints="@string/form_tw_name_hint"
-            android:hint="@string/form_tw_name_hint"
-            android:inputType="text"
-            android:singleLine="true"
+            android:layout_marginStart="@dimen/margins_edit_text"
+            android:layout_marginLeft="@dimen/margins_edit_text"
+            android:layout_marginTop="@dimen/margins_edit_text"
+            android:layout_marginEnd="@dimen/margins_edit_text"
+            android:layout_marginRight="@dimen/margins_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/custom_actionbar" />
+            app:layout_constraintTop_toBottomOf="@id/custom_actionbar">
 
-        <EditText
+            <EditText
+                android:id="@+id/et_form_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/form_tw_name_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textNoSuggestions"
+                android:selectAllOnFocus="true"
+                tools:text="Android" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textview_form_description"
-            android:layout_width="match_parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/form_textview_margin_top"
-            android:autofillHints="@string/form_tw_description_hint"
-            android:hint="@string/form_tw_description_hint"
-            android:inputType="textMultiLine"
+            android:layout_marginStart="@dimen/margins_edit_text"
+            android:layout_marginLeft="@dimen/margins_edit_text"
+            android:layout_marginTop="@dimen/margins_edit_text"
+            android:layout_marginEnd="@dimen/margins_edit_text"
+            android:layout_marginRight="@dimen/margins_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textview_form_name" />
+            app:layout_constraintTop_toBottomOf="@id/textview_form_name">
+
+            <EditText
+                android:id="@+id/et_form_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/form_tw_description_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="textNoSuggestions"
+                android:selectAllOnFocus="true"
+                tools:text="Android" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <ImageButton
             android:id="@+id/imagebutton_form_photo"

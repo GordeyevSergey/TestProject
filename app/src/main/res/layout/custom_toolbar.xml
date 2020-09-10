@@ -25,7 +25,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
         android:background="@null"
-        android:src="@drawable/ic_form_send_30"
+        android:src="@drawable/baseline_send_24"
         android:visibility="gone"/>
 
 </RelativeLayout>

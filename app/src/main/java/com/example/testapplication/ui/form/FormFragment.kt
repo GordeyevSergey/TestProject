@@ -37,8 +37,8 @@ class FormFragment : Fragment() {
 
         //Observers
         formViewModel.formLiveData.observe(viewLifecycleOwner, Observer {
-            binding.textviewFormName.setText(it.name)
-            binding.textviewFormDescription.setText(it.comment)
+            binding.textviewFormName.editText?.setText(it.name)
+            binding.textviewFormDescription.editText?.setText(it.comment)
             changeFormImageButtonSrc(it.photo)
             Timber.d("form updated")
         })
@@ -90,7 +90,7 @@ class FormFragment : Fragment() {
 
 
     private fun saveForm() {
-        formViewModel.saveTextForm(binding.textviewFormName.text.toString(), binding.textviewFormDescription.text.toString())
+        formViewModel.saveTextForm(binding.textviewFormName.editText?.text.toString(), binding.textviewFormDescription.editText?.text.toString())
     }
 
     private fun showAlertDialog(message: String) {
